@@ -17,8 +17,8 @@ public:
     void print();
     void addValue(int value);
 
-    void add(DynamicArray& other);
-    void subtract(DynamicArray& other);
+    void add(const DynamicArray& other);
+    void subtract(const DynamicArray& other);
 };
 
 #endif
