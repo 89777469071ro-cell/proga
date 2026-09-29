@@ -76,7 +76,7 @@ void DynamicArray::addValue(int value) {
     size++;
 }
 
-void DynamicArray::add(DynamicArray& other) {
+void DynamicArray::add(const DynamicArray& other) {
     for (int i = 0; i < size; i++) {
         if (i < other.size) {
             data[i] += other.data[i];
@@ -84,7 +84,7 @@ void DynamicArray::add(DynamicArray& other) {
     }
 }
 
-void DynamicArray::subtract(DynamicArray& other) {
+void DynamicArray::subtract(const DynamicArray& other) {
     for (int i = 0; i < size; i++) {
         if (i < other.size) {
             data[i] -= other.data[i];
