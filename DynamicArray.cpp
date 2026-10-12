@@ -1,9 +1,14 @@
 #include <iostream>
+#include <stdexcept>
 #include "DynamicArray.h"
 
 using namespace std;
 
 DynamicArray::DynamicArray(int size) {
+    if (size < 0) {
+        throw invalid_argument("Размер массива не может быть отрицательным");
+    }
+
     this->size = size;
     data = new int[size];
 
@@ -18,13 +23,11 @@ DynamicArray::~DynamicArray() {
 
 void DynamicArray::set(int index, int value) {
     if (index < 0 || index >= size) {
-        cout << "Ошибка: индекс вне границ массива" << endl;
-        return;
+        throw out_of_range("Индекс вне границ массива");
     }
 
     if (value < -100 || value > 100) {
-        cout << "Ошибка: значение должно быть от -100 до 100" << endl;
-        return;
+        throw invalid_argument("Значение должно быть от -100 до 100");
     }
 
     data[index] = value;
@@ -32,8 +35,7 @@ void DynamicArray::set(int index, int value) {
 
 int DynamicArray::get(int index) {
     if (index < 0 || index >= size) {
-        cout << "Ошибка: индекс вне границ массива" << endl;
-        return 0;
+        throw out_of_range("Индекс вне границ массива");
     }
 
     return data[index];
@@ -58,8 +60,7 @@ DynamicArray::DynamicArray(const DynamicArray& other) {
 
 void DynamicArray::addValue(int value) {
     if (value < -100 || value > 100) {
-        cout << "Ошибка: значение должно быть от -100 до 100" << endl;
-        return;
+        throw invalid_argument("Значение должно быть от -100 до 100");
     }
 
     int* newData = new int[size + 1];

@@ -1,4 +1,6 @@
 #include <iostream>
+#include <new>
+#include <stdexcept>
 #include "DynamicArray.h"
 
 using namespace std;
@@ -12,12 +14,10 @@ int main() {
     arr.set(3, 100);
     arr.set(4, -100);
 
+    cout << "Массив: ";
     arr.print();
 
     cout << "Элемент с индексом 2: " << arr.get(2) << endl;
-
-    arr.set(10, 50);
-    arr.set(1, 150);
 
     DynamicArray copy(arr);
 
@@ -28,8 +28,6 @@ int main() {
 
     cout << "Массив после добавления: ";
     arr.print();
-
-    arr.addValue(150);
 
     DynamicArray arrA(4);
     DynamicArray arrB(3);
@@ -58,6 +56,30 @@ int main() {
 
     cout << "A после вычитания: ";
     arrA.print();
+
+    cout << endl << "Проверка исключений:" << endl;
+
+    try {
+        arr.get(10);
+    }
+    catch (const out_of_range& e) {
+        cout << "out_of_range: " << e.what() << endl;
+    }
+
+    try {
+        arr.set(0, 150);
+    }
+    catch (const invalid_argument& e) {
+        cout << "invalid_argument: " << e.what() << endl;
+    }
+
+    try {
+        // Демонстрация перехвата bad_alloc
+        throw bad_alloc();
+    }
+    catch (const bad_alloc& e) {
+        cout << "bad_alloc: не удалось выделить память" << endl;
+    }
 
     return 0;
 }
