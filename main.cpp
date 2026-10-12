@@ -1,69 +1,43 @@
 #include <iostream>
-#include <new>
+#include <string>
 #include <stdexcept>
+#include <typeinfo>
 #include "DynamicArray.h"
 
 using namespace std;
 
 int main() {
-    DynamicArray arr(5);
+    DynamicArray<int> arr(3);
 
     arr.set(0, 10);
-    arr.set(1, -20);
-    arr.set(2, 50);
-    arr.set(3, 100);
-    arr.set(4, -100);
+    arr.set(1, 20);
+    arr.set(2, 30);
 
-    cout << "Массив: ";
-    arr.print();
+    cout << "Целочисленный массив: " << arr << endl;
 
-    cout << "Элемент с индексом 2: " << arr.get(2) << endl;
+    DynamicArray<int> arr2(3);
 
-    DynamicArray copy(arr);
+    arr2.set(0, 10);
+    arr2.set(1, 25);
+    arr2.set(2, 35);
 
-    cout << "Копия массива: ";
-    copy.print();
+    cout << "Второй массив: " << arr2 << endl;
+    cout << "Расстояние между массивами: " << arr.distance(arr2) << endl;
 
-    arr.addValue(30);
+    DynamicArray<string> words(2);
 
-    cout << "Массив после добавления: ";
-    arr.print();
+    words.set(0, "Привет");
+    words.set(1, "мир");
 
-    DynamicArray arrA(4);
-    DynamicArray arrB(3);
-
-    arrA.set(0, 10);
-    arrA.set(1, 20);
-    arrA.set(2, 30);
-    arrA.set(3, 40);
-
-    arrB.set(0, 1);
-    arrB.set(1, 2);
-    arrB.set(2, 3);
-
-    cout << "Массив A: ";
-    arrA.print();
-
-    cout << "Массив B: ";
-    arrB.print();
-
-    arrA.add(arrB);
-
-    cout << "A после сложения: ";
-    arrA.print();
-
-    arrA.subtract(arrB);
-
-    cout << "A после вычитания: ";
-    arrA.print();
+    cout << "Строковый массив: " << words << endl;
 
     cout << endl << "Проверка исключений:" << endl;
 
     try {
-        arr.get(10);
+        words.distance(words);
     }
-    catch (const out_of_range& e) {
-        cout << "out_of_range: " << e.what() << endl;
+    catch (const bad_typeid& e) {
+        cout << "bad_typeid: расстояние доступно только для числовых типов" << endl;
     }
 
     try {
@@ -74,11 +48,18 @@ int main() {
     }
 
     try {
-        // Демонстрация перехвата bad_alloc
-        throw bad_alloc();
+        arr.get(10);
     }
-    catch (const bad_alloc& e) {
-        cout << "bad_alloc: не удалось выделить память" << endl;
+    catch (const out_of_range& e) {
+        cout << "out_of_range: " << e.what() << endl;
+    }
+
+    try {
+        DynamicArray<int> arr3(2);
+        arr.distance(arr3);
+    }
+    catch (const invalid_argument& e) {
+        cout << "invalid_argument: " << e.what() << endl;
     }
 
     return 0;
