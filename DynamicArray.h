@@ -22,6 +22,60 @@ private:
     }
 
 public:
+    class Proxy {
+    private:
+        DynamicArray& arr;
+        int index;
+
+    public:
+        Proxy(DynamicArray& arr, int index) : arr(arr), index(index) {}
+
+        Proxy& operator=(T value) {
+            arr.set(index, value);
+            return *this;
+        }
+
+        Proxy& operator=(const Proxy& other) {
+            return *this = static_cast<T>(other);
+        }
+
+        operator T() const {
+            return arr.get(index);
+        }
+    };
+
+    Proxy operator[](int index) {
+        if (index < 0 || index >= size) {
+            throw std::out_of_range("Индекс вне границ массива");
+        }
+
+        return Proxy(*this, index);
+    }
+
+    T operator[](int index) const {
+        if (index < 0 || index >= size) {
+            throw std::out_of_range("Индекс вне границ массива");
+        }
+
+        return data[index];
+    }
+
+    T* begin() {
+        return data;
+    }
+
+    T* end() {
+        return data + size;
+    }
+
+    const T* begin() const {
+        return data;
+    }
+
+    const T* end() const {
+        return data + size;
+    }
+
     DynamicArray(int size) {
         if (size < 0) {
             throw std::invalid_argument("Размер массива не может быть отрицательным");
@@ -89,16 +143,74 @@ public:
         size++;
     }
 
-    void add(const DynamicArray& other) {
-        for (int i = 0; i < size && i < other.size; i++) {
-            data[i] += other.data[i];
+    bool operator==(const DynamicArray& other) const {
+        if (size != other.size) {
+            return false;
         }
+
+        for (int i = 0; i < size; i++) {
+            if (data[i] != other.data[i]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
-    void subtract(const DynamicArray& other) {
-        for (int i = 0; i < size && i < other.size; i++) {
-            data[i] -= other.data[i];
+    bool operator!=(const DynamicArray& other) const {
+        return !(*this == other);
+    }
+
+    DynamicArray& operator+=(const DynamicArray& other) {
+        for (int i = 0; i < size; i++) {
+            T value = data[i];
+
+            if (i < other.size) {
+                value += other.data[i];
+            }
+
+            checkValue(value);
+            data[i] = value;
         }
+
+        return *this;
+    }
+
+    DynamicArray& operator-=(const DynamicArray& other) {
+        for (int i = 0; i < size; i++) {
+            T value = data[i];
+
+            if (i < other.size) {
+                value -= other.data[i];
+            }
+
+            checkValue(value);
+            data[i] = value;
+        }
+
+        return *this;
+    }
+
+    DynamicArray& operator+=(T value) {
+        for (int i = 0; i < size; i++) {
+            T newValue = data[i] + value;
+
+            checkValue(newValue);
+            data[i] = newValue;
+        }
+
+        return *this;
+    }
+
+    DynamicArray& operator-=(T value) {
+        for (int i = 0; i < size; i++) {
+            T newValue = data[i] - value;
+
+            checkValue(newValue);
+            data[i] = newValue;
+        }
+
+        return *this;
     }
 
     double distance(const DynamicArray& other) {
