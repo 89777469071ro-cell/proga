@@ -1,149 +1,98 @@
+
 #include <iostream>
 #include <string>
+#include <utility>
 #include "DynamicArray.h"
 
 using namespace std;
 
 int main() {
-    try {
-        DynamicArray<int> arr(3);
-        arr.set(0, 10);
-        arr.set(1, 20);
-        arr.set(2, 30);
+    cout << "Проверка конструктора копирования:" << endl;
 
-        DynamicArray<int> arr2(3);
-        arr2.set(0, 10);
-        arr2.set(1, 25);
-        arr2.set(2, 35);
+    DynamicArray<int> arr1(3);
+    arr1.set(0, 10);
+    arr1.set(1, 20);
+    arr1.set(2, 30);
 
-        cout << "Целочисленный массив: " << arr << endl;
-        cout << "Второй массив: " << arr2 << endl;
-        cout << "Расстояние между массивами: " << arr.distance(arr2) << endl;
+    DynamicArray<int> arr2(arr1);
 
-        DynamicArray<string> words(2);
-        words.set(0, "Привет");
-        words.set(1, "мир");
+    cout << "Исходный массив: " << arr1 << endl;
+    cout << "Скопированный массив: " << arr2 << endl;
 
-        cout << "Строковый массив: " << words << endl;
+    arr2[0] = 50;
 
-        cout << "\nПроверка исключений:" << endl;
+    cout << "После изменения копии: " << endl;
+    cout << "Исходный массив: " << arr1 << endl;
+    cout << "Скопированный массив: " << arr2 << endl;
 
-        try {
-            words.distance(words);
-        }
-        catch (const bad_typeid& e) {
-            cout << "bad_typeid: расстояние доступно только для числовых типов" << endl;
-        }
 
-        try {
-            arr.set(0, 150);
-        }
-        catch (const invalid_argument& e) {
-            cout << "invalid_argument: " << e.what() << endl;
-        }
+    cout << "\nПроверка копирующего присваивания:" << endl;
 
-        try {
-            arr.get(10);
-        }
-        catch (const out_of_range& e) {
-            cout << "out_of_range: " << e.what() << endl;
-        }
+    DynamicArray<int> arr3(2);
+    arr3.set(0, 5);
+    arr3.set(1, 15);
 
-        try {
-            DynamicArray<int> arr3(2);
-            arr.distance(arr3);
-        }
-        catch (const invalid_argument& e) {
-            cout << "invalid_argument: " << e.what() << endl;
-        }
+    arr3 = arr1;
 
-        cout << "\nПроверка operator[]:" << endl;
+    cout << "После присваивания: " << arr3 << endl;
 
-        arr[0] = 50;
-        cout << "Элемент с индексом 0: " << arr[0] << endl;
+    arr3[0] = 99;
 
-        arr[1] = arr[2];
-        cout << "После копирования элемента: " << arr << endl;
+    cout << "После изменения копии: " << arr3 << endl;
+    cout << "Исходный массив: " << arr1 << endl;
 
-        try {
-            arr[0] = 150;
-        }
-        catch (const invalid_argument& e) {
-            cout << "invalid_argument: " << e.what() << endl;
-        }
 
-        try {
-            arr[10] = 5;
-        }
-        catch (const out_of_range& e) {
-            cout << "out_of_range: " << e.what() << endl;
-        }
+    cout << "\nПроверка присваивания самому себе:" << endl;
 
-        cout << "\nПроверка операторов сравнения:" << endl;
+    arr1 = arr1;
 
-        if (arr == arr2) {
-            cout << "Массивы равны" << endl;
-        }
-        else {
-            cout << "Массивы не равны" << endl;
-        }
+    cout << "Массив после присваивания самому себе: " << arr1 << endl;
 
-        if (arr != arr2) {
-            cout << "Массивы различаются" << endl;
-        }
-        else {
-            cout << "Массивы одинаковые" << endl;
-        }
 
-        cout << "\nПроверка арифметических операторов:" << endl;
+    cout << "\nПроверка конструктора перемещения:" << endl;
 
-        DynamicArray<int> numbers1(3);
-        numbers1.set(0, 10);
-        numbers1.set(1, 20);
-        numbers1.set(2, 30);
+    DynamicArray<int> arr4(3);
+    arr4.set(0, 1);
+    arr4.set(1, 2);
+    arr4.set(2, 3);
 
-        DynamicArray<int> numbers2(3);
-        numbers2.set(0, 5);
-        numbers2.set(1, 10);
-        numbers2.set(2, 0);
+    cout << "Исходный массив: " << arr4 << endl;
 
-        numbers1 += numbers2;
-        cout << "После сложения массивов: " << numbers1 << endl;
+    DynamicArray<int> arr5(std::move(arr4));
 
-        numbers1 -= numbers2;
-        cout << "После вычитания массивов: " << numbers1 << endl;
+    cout << "Новый массив: " << arr5 << endl;
+    cout << "Исходный массив после перемещения: " << arr4 << endl;
 
-        numbers1 += 5;
-        cout << "После прибавления числа: " << numbers1 << endl;
 
-        numbers1 -= 5;
-        cout << "После вычитания числа: " << numbers1 << endl;
+    cout << "\nПроверка перемещающего присваивания:" << endl;
 
-        cout << "\nПроверка итераторов:" << endl;
+    DynamicArray<int> arr6(2);
+    arr6.set(0, 7);
+    arr6.set(1, 8);
 
-        cout << "Перебор массива: ";
-        for (int value : numbers1) {
-            cout << value << " ";
-        }
-        cout << endl;
+    DynamicArray<int> arr7(3);
+    arr7.set(0, 100);
+    arr7.set(1, 90);
+    arr7.set(2, 80);
 
-        for (int& value : numbers1) {
-            value += 1;
-        }
+    arr6 = std::move(arr7);
 
-        cout << "После изменения элементов: " << numbers1 << endl;
+    cout << "Массив после перемещения: " << arr6 << endl;
+    cout << "Исходный массив после перемещения: " << arr7 << endl;
 
-        const DynamicArray<int>& constNumbers = numbers1;
 
-        cout << "Перебор константного массива: ";
-        for (int value : constNumbers) {
-            cout << value << " ";
-        }
-        cout << endl;
-    }
-    catch (const exception& e) {
-        cout << "Ошибка: " << e.what() << endl;
-    }
+    cout << "\nПроверка перемещения самого себя:" << endl;
+
+    arr6 = std::move(arr6);
+
+    cout << "Массив после перемещения самому себе: " << arr6 << endl;
+
+
+    cout << "\nПроверка работы после перемещения:" << endl;
+
+    arr7.addValue(25);
+
+    cout << "Массив после добавления элемента: " << arr7 << endl;
 
     return 0;
 }

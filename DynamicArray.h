@@ -65,7 +65,7 @@ public:
     }
 
     T* end() {
-        return data + size;
+        return size == 0 ? data : data + size;
     }
 
     const T* begin() const {
@@ -73,7 +73,7 @@ public:
     }
 
     const T* end() const {
-        return data + size;
+        return size == 0 ? data : data + size;
     }
 
     DynamicArray(int size) {
@@ -93,6 +93,7 @@ public:
         delete[] data;
     }
 
+    // Конструктор копирования
     DynamicArray(const DynamicArray& other) {
         size = other.size;
         data = new T[size];
@@ -100,6 +101,50 @@ public:
         for (int i = 0; i < size; i++) {
             data[i] = other.data[i];
         }
+    }
+
+    // Оператор копирующего присваивания
+    DynamicArray& operator=(const DynamicArray& other) {
+        if (this == &other) {
+            return *this;
+        }
+
+        T* newData = new T[other.size];
+
+        for (int i = 0; i < other.size; i++) {
+            newData[i] = other.data[i];
+        }
+
+        delete[] data;
+
+        data = newData;
+        size = other.size;
+
+        return *this;
+    }
+
+    // Конструктор перемещения
+    DynamicArray(DynamicArray&& other) noexcept {
+        data = other.data;
+        size = other.size;
+
+        other.data = nullptr;
+        other.size = 0;
+    }
+
+    // Оператор перемещающего присваивания
+    DynamicArray& operator=(DynamicArray&& other) noexcept {
+        if (this != &other) {
+            delete[] data;
+
+            data = other.data;
+            size = other.size;
+
+            other.data = nullptr;
+            other.size = 0;
+        }
+
+        return *this;
     }
 
     void set(int index, T value) {
